@@ -1,13 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ThemeProvider } from './components/theme-provider.tsx';
-import App from './App.tsx';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "./components/theme-provider.tsx";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ThemeProvider defaultTheme="light" storageKey="dashboard-theme">
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>
-);
+const router = createRouter({ routeTree });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+const rootElement = document.getElementById("root")!;
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <ThemeProvider defaultTheme="light" storageKey="dashboard-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+}
